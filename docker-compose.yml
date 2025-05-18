@@ -8,6 +8,7 @@ services:
     volumes:
       - .:/var/www
       - ./php:/usr/local/etc/php/conf.d
+      - ./apache/default.conf:/etc/apache2/sites-enabled/000-default.conf
     ports:
       - 8008:80
     env_file: .env

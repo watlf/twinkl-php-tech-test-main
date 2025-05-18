@@ -1,5 +1,7 @@
 FROM php:8.3-apache
 
+ENV APACHE_DOCUMENT_ROOT=/var/www/public
+
 RUN apt-get -y update \
     && apt-get -y install git zlib1g-dev libzip-dev unzip \
     && a2enmod rewrite \
@@ -7,9 +9,5 @@ RUN apt-get -y update \
     && pecl install xdebug-3.3.1 \
     && docker-php-ext-enable xdebug
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-
-ENV APACHE_DOCUMENT_ROOT=/var/www/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 WORKDIR /var/www
