@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./www:/var/www
+      - .:/var/www
       - ./php:/usr/local/etc/php/conf.d
     ports:
       - 8008:80
