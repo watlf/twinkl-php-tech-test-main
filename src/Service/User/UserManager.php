@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Signup;
+namespace App\Service\User;
 
-use App\Exception\UserAlreadyExistsException;
 use App\Exception\ValidationException;
 use App\Model\User;
 use App\ORM\Manager\UserStorageManager;
@@ -12,7 +11,7 @@ use App\Service\SendEmail\EmailStrategyFactory;
 use App\Service\SendEmail\Provider\EmailSenderInterface;
 use App\Validator\UserInputValidator;
 
-class RegistrationUserService
+class UserManager
 {
     public function __construct(
         private UserStorageManager $userStorageManager,
@@ -21,7 +20,7 @@ class RegistrationUserService
     ) {
     }
 
-    public function registerUser(array $requestData): void
+    public function registerUser(array $requestData): array
     {
         $errors = $this->validator->validateUserInput($requestData);
 
@@ -31,16 +30,18 @@ class RegistrationUserService
 
         $user = new User($requestData);
 
-        if ($this->userStorageManager->findByEmail($user->getEmail())) {
-            throw new UserAlreadyExistsException("User already registered with such email {$user->getEmail()}");
-        }
+        $newUser = $this->userStorageManager->createUser($user);
 
-        $this->userStorageManager->create($user);
+        if (!$newUser) {
+            throw new \Exception('Cannot create user');
+        }
 
         $emailContentFactory = new EmailStrategyFactory();
 
         $emailContentStrategy = $emailContentFactory->getEmailStrategyForRole($user->getRole());
 
         $this->emailSender->send($user->getEmail(), $emailContentStrategy->getMessage());
+
+        return $newUser;
     }
 }

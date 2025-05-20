@@ -32,7 +32,7 @@ class UserStorageManagerTest extends TestCase
 
         $this->PDOStatement->expects($this->once())->method('execute');
         $this->PDO->expects($this->once())->method('prepare')->with(
-            'INSERT INTO `users` (first_name,last_name,email,role) VALUES (:first_name,:last_name,:email,:role)'
+            'INSERT INTO `users` (firstName,lastName,email,role) VALUES (:firstName,:lastName,:email,:role)'
         )->willReturn($this->PDOStatement);
 
         $userStorageManager->create($this->getModel());
@@ -44,7 +44,7 @@ class UserStorageManagerTest extends TestCase
 
         $this->PDOStatement->expects($this->once())->method('execute');
         $this->PDO->expects($this->once())->method('prepare')->with(
-            'UPDATE `users` SET first_name=:first_name,last_name=:last_name,email=:email,role=:role WHERE id = :id'
+            'UPDATE `users` SET firstName=:firstName,lastName=:lastName,email=:email,role=:role WHERE id = :id'
         )->willReturn($this->PDOStatement);
 
         $userStorageManager->update(1, $this->getModel());

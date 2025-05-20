@@ -16,8 +16,8 @@ class UserStorageManager extends AbstractStorageManager
             ->getConnection()
             ->exec('CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            first_name VARCHAR(100),
-            last_name VARCHAR(100),
+            firstName VARCHAR(100),
+            lastName VARCHAR(100),
             email VARCHAR(100) UNIQUE,
             role VARCHAR(50)
         )');
@@ -30,5 +30,23 @@ class UserStorageManager extends AbstractStorageManager
         $stmt->execute(['val' => $email]);
 
         return $stmt->fetch() ?: [];
+    }
+
+    public function createUser(User $user): array
+    {
+        $userId = parent::create($user);
+
+        return $userId ? $this->findById($userId) : [];
+    }
+
+    public function findById(int $id): array
+    {
+        $stmt = $this->db->getConnection()->prepare("SELECT * FROM {$this->tableName} WHERE `id` = :id LIMIT 1");
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $result ?: [];
     }
 }

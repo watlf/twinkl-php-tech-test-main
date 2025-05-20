@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Validator;
 
 use App\ExternalService\BlacklistedUsersInterface;
+use App\ORM\Manager\UserStorageManager;
 use App\Validator\Rules\AbstractValidationRule;
 use App\Validator\Rules\EmailValidationRule;
 use App\Validator\Rules\IpValidationRule;
 use App\Validator\Rules\NoSpecialCharsRule;
 use App\Validator\Rules\RoleTypeValidationRule;
+use App\Validator\Rules\UniqueUserEmailValidationRule;
 use App\Validator\Validator;
 use PHPUnit\Framework\TestCase;
 
@@ -52,6 +54,34 @@ class ValidatorTest extends TestCase
 
         $this->assertNotEmpty($actualError);
         $this->assertSame('IP address is blocked', current($actualError));
+    }
+
+    public function testUserAlreadyExists(): void
+    {
+        $userStorageManager = $this->getMockBuilder(UserStorageManager::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findByEmail'])
+            ->getMock();
+
+        $userStorageManager->expects($this->once())->method('findByEmail')->willReturn([
+            'id' => 1,
+            'firstName' => 'John',
+            'lastName' => 'Dou',
+            'email' => 'dou@mail.com',
+            'role' => 'student',
+        ]);
+
+        $rule = new UniqueUserEmailValidationRule(
+            'email',
+            ['email' => 'dou@mail.com'],
+            $userStorageManager
+        );
+
+        $this->validator->addRule($rule);
+        $actualError = $this->validator->validate();
+
+        $this->assertNotEmpty($actualError);
+        $this->assertSame('User with sush email already registered', current($actualError));
     }
 
     public static function getValidationRules(): array

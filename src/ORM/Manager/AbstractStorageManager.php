@@ -16,7 +16,7 @@ abstract class AbstractStorageManager
 
     abstract protected function initializeTable(): void;
 
-    public function create(AbstractModel $model): bool
+    public function create(AbstractModel $model): ?int
     {
         $attributes = $model->toArray();
         $columns = array_keys($attributes);
@@ -28,7 +28,7 @@ abstract class AbstractStorageManager
 
         $this->bindValues($stmt, $attributes);
 
-        return $stmt->execute();
+        return $stmt->execute() ? (int) $this->db->getConnection()->lastInsertId() : null;
     }
 
     public function update(int $id, AbstractModel $model): bool
@@ -47,11 +47,11 @@ abstract class AbstractStorageManager
         return $stmt->execute();
     }
 
-    public function getAll(string $table, string $class): array
+    public function getAll(string $table): array
     {
         $stmt = $this->db->getConnection()->query("SELECT * FROM {$table}");
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     private function bindValues(\PDOStatement $stmt, array $attributes): void

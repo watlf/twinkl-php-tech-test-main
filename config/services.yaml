@@ -40,6 +40,6 @@ services:
         arguments:
             $db: '@mysql_connection'
 
-    App\Service\Signup\RegistrationUserService:
+    App\Service\User\UserManager:
         arguments:
             $userStorageManager: '@App\ORM\Manager\UserStorageManager'

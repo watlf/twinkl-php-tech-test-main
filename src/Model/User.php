@@ -72,8 +72,8 @@ class User extends AbstractModel
     public function toArray(): array
     {
         return [
-            'first_name' => $this->getFirstName(),
-            'last_name' => $this->getLastName(),
+            'firstName' => $this->getFirstName(),
+            'lastName' => $this->getLastName(),
             'email' => $this->getEmail(),
             'role' => $this->getRole(),
         ];
