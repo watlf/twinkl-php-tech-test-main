@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace App\Tests\Unit\ORM\Manager\UserStorage;
+
 use App\Model\User;
 use App\ORM\Connection\DbConnectionInterface;
 use App\ORM\Manager\UserStorageManager;
@@ -18,8 +20,8 @@ class UserStorageManagerTest extends TestCase
     public function setUp(): void
     {
         $this->db = $this->createMock(DbConnectionInterface::class);
-        $this->PDO = $this->createMock(PDO::class);
-        $this->PDOStatement = $this->createMock(PDOStatement::class);
+        $this->PDO = $this->createMock(\PDO::class);
+        $this->PDOStatement = $this->createMock(\PDOStatement::class);
 
         $this->db->method('getConnection')->willReturn($this->PDO);
     }
