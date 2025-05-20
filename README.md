@@ -45,6 +45,10 @@ Add command to fix php code style
 
 `php vendor/bin/php-cs-fixer fix`
 
+Run tests
+
+`vendor/bin/phpunit`
+
 Feel free to amend the docker configuration and re-build if required 
 (eg. to point to a different directory for the public website files by adding
 a new mounted volume in docker-compose.yml). 

@@ -17,8 +17,25 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
-            - '../src/Entity/'
+            - '../src/Model/'
             - '../src/Kernel.php'
+
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: [ 'controller.service_arguments' ]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    mysql_connection:
+        autowire: false
+        class: App\ORM\Connection\MysqlConnection
+        arguments:
+            $host: '%env(MYSQL_HOST)%'
+            $dbname: '%env(MYSQL_DATABASE)%'
+            $username: '%env(MYSQL_USER)%'
+            $password: '%env(MYSQL_PASSWORD)%'
+
+    App\ORM\Manager\UserStorageManager:
+        arguments:
+            $db: '@mysql_connection'
